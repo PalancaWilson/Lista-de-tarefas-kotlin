@@ -5,6 +5,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+// Testes das funções utilitárias (4.3/4.4).
 class TarefaUtilsTest {
 
     @Test

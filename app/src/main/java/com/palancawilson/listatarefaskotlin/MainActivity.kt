@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+// 4.1: actividade principal da lista de tarefas.
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +45,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// Ecrã principal da lista de tarefas.
 @Composable
 fun TodoApp() {
+    // Estado: lista de tarefas, texto digitado e aviso.
     val tarefas = remember { mutableStateListOf<Task>() }
     var texto by remember { mutableStateOf("") }
     var aviso by remember { mutableStateOf<String?>(null) }
@@ -62,6 +65,7 @@ fun TodoApp() {
             modifier = Modifier.padding(bottom = 4.dp)
         )
 
+        // Campo de texto + botão "Add Task".
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -79,6 +83,7 @@ fun TodoApp() {
             )
             Button(
                 onClick = {
+                    // 4.3: valida, adiciona e limpa o campo.
                     aviso = when {
                         !tituloValido(texto) -> "Escreve uma tarefa antes de adicionar."
                         tarefaJaExiste(tarefas, texto) -> "Essa tarefa já existe."
@@ -107,6 +112,7 @@ fun TodoApp() {
                 modifier = Modifier.padding(top = 8.dp)
             )
         } else {
+            // 4.1: lista com rolagem das tarefas.
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -123,6 +129,7 @@ fun TodoApp() {
     }
 }
 
+// Item da lista: checkbox de conclusão e toque para remover.
 @Composable
 private fun TarefaItem(
     tarefa: Task,
