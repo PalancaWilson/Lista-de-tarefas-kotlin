@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
@@ -19,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -52,6 +54,7 @@ fun TodoApp() {
     val tarefas = remember { mutableStateListOf<Task>() }
     var texto by remember { mutableStateOf("") }
     var aviso by remember { mutableStateOf<String?>(null) }
+    var indiceParaApagar by remember { mutableStateOf<Int?>(null) }
 
     Column(
         modifier = Modifier
@@ -121,15 +124,41 @@ fun TodoApp() {
                     TarefaItem(
                         tarefa = tarefa,
                         onToggle = { alternarConclusao(tarefas, indice) },
-                        onDelete = { removerTarefa(tarefas, indice) }
+                        onDelete = { indiceParaApagar = indice }
                     )
                 }
             }
         }
     }
+
+    // Diálogo de confirmação antes de apagar a tarefa.
+    val indiceApagar = indiceParaApagar
+    val tarefaApagar = indiceApagar?.let { tarefas.getOrNull(it) }
+    if (indiceApagar != null && tarefaApagar != null) {
+        AlertDialog(
+            onDismissRequest = { indiceParaApagar = null },
+            title = { Text("Apagar tarefa") },
+            text = { Text("Queres mesmo apagar \"${tarefaApagar.title}\"?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        removerTarefa(tarefas, indiceApagar)
+                        indiceParaApagar = null
+                    }
+                ) {
+                    Text("Apagar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { indiceParaApagar = null }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 }
 
-// Item da lista: checkbox de conclusão e toque para remover.
+// Item da lista: checkbox de conclusão e toque pede confirmação para remover.
 @Composable
 private fun TarefaItem(
     tarefa: Task,
